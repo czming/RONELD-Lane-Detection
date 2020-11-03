@@ -2,7 +2,7 @@
 
 Python implementation for "RONELD: Robust Neural Network Output Enhancement for Active Lane Detection"
 
-Code to be released soon!
+Code to be released soon! Subscribe to <a href="https://github.com/czming/RONELD-Lane-Detection/issues/1">this issue</a> to be notified when that happens.
 
 <br>
 
