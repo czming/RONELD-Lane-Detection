@@ -8,12 +8,12 @@ import numpy as np
 
 from lane_detection_functions import roneld_lane_detection
 
-IMAGE_FOLDER = ".\\example"
+IMAGE_FOLDER = "./example"
 # set true to plot ground truths on image
 plot_gt = True
 
 # get the folders
-image_files = glob.glob(IMAGE_FOLDER + "\\*.jpg")
+image_files = glob.glob(IMAGE_FOLDER + "/*.jpg")
 
 # these need to be reset for each separate clip (otherwise data from one clip would be used on
 # another
