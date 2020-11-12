@@ -51,6 +51,8 @@ Then, run test.py:
   python test.py
 ```
 
+Some sample images from the CULane dataset (https://xingangpan.github.io/projects/CULane.html) with lane outputs from the SCNN model have been included included to test the method.
+
 <br>
 
 ## Citing RONELD
