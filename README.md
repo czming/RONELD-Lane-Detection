@@ -2,8 +2,6 @@
 
 Python implementation for "RONELD: Robust Neural Network Output Enhancement for Active Lane Detection"
 
-Code to be released soon! Subscribe to <a href="https://github.com/czming/RONELD-Lane-Detection/issues/1">this issue</a> to be notified when that happens.
-
 <br>
 
 ## Paper
@@ -22,6 +20,8 @@ RONELD uses probability map outputs from deep learning lane detection models suc
 <br>
 
 ## Using RONELD
+
+This code has been tested on Python 3.6 and should work on later versions as well.
 
  - lane_detection_functions.py
  - evaluate.py
@@ -70,7 +70,7 @@ Then, run test.py:
 
 ## To-do list
 
-- [ ] Add lane_detection_functions
+- [x] Add lane_detection_functions
 - [ ] Add test code that can be run from the command line
 - [ ] Add evaluation code
 
