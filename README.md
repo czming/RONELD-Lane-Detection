@@ -15,7 +15,7 @@ Link on arXiv: https://arxiv.org/abs/2010.09548
 
 <img src="process_workflow.jpg" />
 
-RONELD uses probability map outputs from deep learning lane detection models such as SCNN and ENet-SAD to detect and optimize active lane detection. RONELD searches for the two lane markings that demarcate the active lane which is the single road space that the vehicle is currently travelling on.
+RONELD is intended as a turnkey solution for use on probability map outputs from deep learning lane detection models such as SCNN and ENet-SAD to detect and optimize active lane detection. RONELD searches for the two lane markings that demarcate the active lane which is the single road space that the vehicle is currently travelling on.
 
 <br>
 
@@ -51,12 +51,12 @@ Then, run test.py:
   python test.py
 ```
 
-Some sample images from the CULane dataset (https://xingangpan.github.io/projects/CULane.html) with lane outputs from the SCNN model have been included included to test the method.
+Some sample images from the CULane dataset (https://xingangpan.github.io/projects/CULane.html) with lane outputs from the SCNN model have been included included to showcase the method.
 
 <br>
 
 ## Citing RONELD
-
+If you find RONELD helpful to your research, please cite it:
 ```
 @misc{chng2020roneld,
       title={RONELD: Robust Neural Network Output Enhancement for Active Lane Detection}, 
