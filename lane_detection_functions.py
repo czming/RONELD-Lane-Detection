@@ -547,7 +547,7 @@ def get_lane(lane_image:np.ndarray, row_stride=20, confidence_threshold=1):
                 right_bound = int(point[0] + (lane_image.shape[1] * 0.25)) if (point[0] + (
                         lane_image.shape[1] * 0.25)) <= lane_image.shape[1] else lane_image.shape[1]
                 curr_lane.append(point)
-                confidence.append(lane_image[row][column])
+                confidence.append(lane_image[point[1]][point[0]])
                 # skip 20 rows since we find highest probability for this row plus next 19 rows
                 row += row_stride
                 break
