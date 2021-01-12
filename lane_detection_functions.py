@@ -240,7 +240,7 @@ def plot_curves(display_lanes:list, output_images:list, lane_image_size:tuple,
                                       output_images[lane_index].shape[0])),
                                  (0, 255, 0), 20)
 
-@njit(parallel=True, fastmath=True)
+@njit(fastmath=True)
 def nb_max(array:np.ndarray):
     """
     finds max in array using parallel numba to speed it up
@@ -250,7 +250,7 @@ def nb_max(array:np.ndarray):
     return np.max(array)
 
 # same as linear_regression but in linear algebra form
-@jit(parallel=True, fastmath=True)
+@jit(fastmath=True)
 def linear_regression_matrix(points: np.ndarray, confidence: np.ndarray):
     """
     weighted least-squares linear regression to find line given points and their confidence
@@ -352,9 +352,8 @@ def correlation_linear(points: np.ndarray):
         return 1
     return x_y_cov ** 2 / (x_var * y_var)
 
-
-@jit(fastmath=True)
-def line_distance(line1: list, line2: list, lane_image_size: tuple):
+@njit(fastmath=True)
+def line_distance(line1, line2, lane_image_size):
     """
     returns root mean square distance between two lines within the image
     :param line1: lane parameters of first lane to be compared
@@ -362,15 +361,33 @@ def line_distance(line1: list, line2: list, lane_image_size: tuple):
     :param lane_image_size: size of the lane image
     :return: root mean square distance between lane1 and lane2 within lane_image_size
     """
-    # top and bottom points, y axis is inverted (higher array elements towards the bottom) hence
-    # top < bottom
     top = 0
     bottom = lane_image_size[0]
 
-    square_distance = square_distance_wrapper(line1, line2)
+    # y coordinate where lines intersect
+    if abs(line1[0] - line2[0]) <= 2 ** (-20):
+        #higher threshold because this value is cubed later on
+        #gradient is the same, parallel lines, calculate horizontal distance between them, square
+        # it and multiply by length
+        #x_delta = c_delta / gradient
+        return math.sqrt(((line1[1] - line2[1]) / line2[0]) ** 2 * (bottom - top) / (bottom - top))
 
-    # integrate from top to bottom then divide (top should be smaller than bottom)
-    return math.sqrt(integrate.quad(square_distance, top, bottom)[0] / abs(bottom - top))
+    intersect_x = (line2[1] - line1[1]) / (line1[0] - line2[0])
+    intersect_y = line1[0] * intersect_x + line1[1]
+
+    inverse_gradient_difference = 1 / line1[0] - 1 / line2[0]
+
+    if top < intersect_y < bottom - 1:
+        #above intersection
+        above = abs((inverse_gradient_difference * bottom - (line1[1] / line1[0] - line2[1] / line2[0])) ** 3 -
+                   (inverse_gradient_difference * intersect_y - (line1[1] / line1[0] - line2[1] / line2[0])) ** 3)
+        below = abs((inverse_gradient_difference * intersect_y - (line1[1] / line1[0] - line2[1] / line2[0])) ** 3 -
+                   (inverse_gradient_difference * top - (line1[1] / line1[0] - line2[1] / line2[0])) ** 3)
+        #if the intersection happens within the image, then need to separate to calculate the integral
+        return math.sqrt((above + below) / abs(inverse_gradient_difference) / 3 / (bottom - top))
+    return math.sqrt(abs((inverse_gradient_difference * bottom - (line1[1] / line1[0] - line2[1] / line2[0])) ** 3 -
+                   (inverse_gradient_difference * top - (line1[1] / line1[0] - line2[1] / line2[0])) ** 3) /
+                     abs(inverse_gradient_difference) / 3 / (bottom - top))
 
 
 def square_distance_wrapper(line1:list, line2:list):
@@ -473,7 +490,7 @@ def find_highest_probability(lane_image:np.ndarray, start_row:int, end_row:int, 
 
 
 # get lanes
-@jit(parallel=True, fastmath=True)
+@jit(fastmath=True)
 def get_all_lanes(lane_images:list, confidence_threshold:int):
     curr_lanes = [{} for _ in range(4)]
     for i in prange(4):
@@ -622,7 +639,7 @@ def get_curr_lanes_age(matchings:list, prev_lanes:List[dict], curr_lanes:List[di
     return curr_lanes_age
 
 # match lanes in prev frame to lanes in current frame
-@jit(parallel=True, fastmath=True)
+@jit(fastmath=True)
 def match_prev_curr(curr_lanes:List[dict], prev_lanes:List[dict], merge_distance:int,
                     lane_image_size:tuple):
     """
